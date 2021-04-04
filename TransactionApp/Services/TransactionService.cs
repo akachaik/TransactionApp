@@ -8,31 +8,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using TransactionApp.Dtos;
 using TransactionApp.Models;
 
 namespace TransactionApp.Services
 {
-    public interface ITransactionService
-    {
-        bool ValidateFileExtension(IFormFile dataFile);
-
-        bool ValidateFileSize(IFormFile dataFile);
-
-        string[] ValidateFileContent(IFormFile dataFile);
-
-        List<TransactionDto> ReadFileContents(IFormFile dataFile);
-
-        string AddTransactions(List<TransactionDto> transactions);
-
-        List<TransactionResult> GetByCurrency(string currency);
-
-        List<TransactionResult> GetByStatus(string status);
-
-        List<TransactionResult> GetByDates(DateTime fromDate, DateTime toDate);
-
-    }
 
     public class TransactionService : ITransactionService
     {
@@ -129,10 +109,11 @@ namespace TransactionApp.Services
             {
 
                 _logger.LogWarning(exception, "Unable to save transaction");
-                return "Unable to save transaction";
+                result = "Unable to save transaction";
 
             }
 
+            return result;
         }
 
         public List<TransactionResult> GetByCurrency(string currency)
