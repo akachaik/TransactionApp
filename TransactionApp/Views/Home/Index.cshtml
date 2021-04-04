@@ -2,7 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1 class="display-4">Import Transactoin File</h1>
+<form enctype="multipart/form-data" method="post" asp-controller="Transaction" asp-action="Import">
+    <input type="file" name="dataFile">
+    <br />
+    <input class="btn btn-primary mt-3" type="submit" value="Upload" />
+</form>
