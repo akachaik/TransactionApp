@@ -26,6 +26,12 @@ namespace TransactionApp.Services
 
         string AddTransactions(List<TransactionDto> transactions);
 
+        List<TransactionResult> GetByCurrency(string currency);
+
+        List<TransactionResult> GetByStatus(string status);
+
+        List<TransactionResult> GetByDates(DateTime fromDate, DateTime toDate);
+
     }
 
     public class TransactionService : ITransactionService
@@ -127,6 +133,78 @@ namespace TransactionApp.Services
 
             }
 
+        }
+
+        public List<TransactionResult> GetByCurrency(string currency)
+        {
+            var transactions = _applicationDbContext.Transactions
+                            .Where(t => t.CurrencyCode == currency)
+                            .ToList();
+            var result = transactions.Select(a => new TransactionResult
+            {
+                Id = a.Id,
+                Status = MapStatus(a.Status),
+                Payment = $"{a.Amount} {a.CurrencyCode}"
+            })
+                .ToList();
+
+            return result;
+        }
+
+        public List<TransactionResult> GetByStatus(string status)
+        {
+            var transactions = _applicationDbContext.Transactions
+                            .Where(t => t.Status == status)
+                            .ToList();
+            var result = transactions.Select(a => new TransactionResult
+            {
+                Id = a.Id,
+                Status = MapStatus(a.Status),
+                Payment = $"{a.Amount} {a.CurrencyCode}"
+            })
+                .ToList();
+
+            return result;
+        }
+
+        public List<TransactionResult> GetByDates(DateTime fromDate, DateTime toDate)
+        {
+            var fromDatreTimeSpan = new TimeSpan(0, 0, 0, 0, 0);
+            fromDate = fromDate.Date + fromDatreTimeSpan;
+
+            var toDateTimeSpan = new TimeSpan(0, 23, 59, 59, 999);
+            toDate = toDate.Date + toDateTimeSpan;
+
+            var transactions = _applicationDbContext.Transactions
+                .Where(t => t.TransactionDate >= fromDate && t.TransactionDate <= toDate)
+                .ToList();
+            var result = transactions.Select(a => new TransactionResult
+            {
+                Id = a.Id,
+                Status = MapStatus(a.Status),
+                Payment = $"{a.Amount} {a.CurrencyCode}"
+            })
+                .ToList();
+
+            return result;
+
+        }
+
+        private string MapStatus(string status)
+        {
+            switch (status)
+            {
+                case "Approved":
+                    return "A";
+                case "Failed":
+                case "Rejected":
+                    return "R";
+                case "Finished":
+                case "Done":
+                    return "D";
+                default:
+                    return string.Empty;
+            }
         }
 
         private List<TransactionDto> ReadXmlContent(IFormFile dataFile)

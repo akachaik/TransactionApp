@@ -50,5 +50,36 @@ namespace TransactionApp.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        public IActionResult GetByCurrency(string currency)
+        {
+            var result = _transactionService.GetByCurrency(currency);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetByStatus(string status)
+        {
+            var result = _transactionService.GetByStatus(status);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetByDates(DateTime fromDate, DateTime toDate)
+        {
+
+            if (fromDate > toDate)
+            {
+                return BadRequest("FromDate is greater than toDate");
+            }
+
+            var result = _transactionService.GetByDates(fromDate, toDate);
+
+            return Ok(result);
+        }
+
     }
 }
