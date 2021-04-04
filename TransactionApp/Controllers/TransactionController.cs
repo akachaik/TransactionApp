@@ -39,6 +39,14 @@ namespace TransactionApp.Controllers
             }
 
             // Save to database
+            var fileContents = _transactionService.ReadFileContents(dataFile);
+
+            var validateMessage = _transactionService.AddTransactions(fileContents);
+
+            if (!string.IsNullOrEmpty(validateMessage))
+            {
+                return BadRequest(validateMessage);
+            }
 
             return Ok();
         }

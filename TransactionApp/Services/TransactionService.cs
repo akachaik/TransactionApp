@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TransactionApp.Dtos;
+using TransactionApp.Models;
 
 namespace TransactionApp.Services
 {
@@ -23,15 +24,19 @@ namespace TransactionApp.Services
 
         List<TransactionDto> ReadFileContents(IFormFile dataFile);
 
+        string AddTransactions(List<TransactionDto> transactions);
+
     }
 
     public class TransactionService : ITransactionService
     {
         private readonly ILogger<TransactionService> _logger;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public TransactionService(ILogger<TransactionService> logger)
+        public TransactionService(ILogger<TransactionService> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
+            _applicationDbContext = applicationDbContext;
         }
 
         public List<TransactionDto> ReadFileContents(IFormFile dataFile)
@@ -90,6 +95,38 @@ namespace TransactionApp.Services
             }
 
             return true;
+        }
+
+        public string AddTransactions(List<TransactionDto> transactions)
+        {
+            var result = string.Empty;
+
+            try
+            {
+                foreach (var item in transactions)
+                {
+                    _applicationDbContext.Transactions.Add(new Transaction
+                    {
+                        Id = item.Id,
+                        Amount = item.Amount.Value,
+                        CurrencyCode = item.CurrencyCode,
+                        Status = item.Status,
+                        TransactionDate = item.TransactionDate.Value
+                    });
+                }
+
+                _applicationDbContext.SaveChanges();
+                return result;
+
+            }
+            catch (Exception exception)
+            {
+
+                _logger.LogWarning(exception, "Unable to save transaction");
+                return "Unable to save transaction";
+
+            }
+
         }
 
         private List<TransactionDto> ReadXmlContent(IFormFile dataFile)
