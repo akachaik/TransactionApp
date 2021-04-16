@@ -29,16 +29,17 @@ namespace TransactionApp.Controllers
                 return BadRequest("File Size is greather than 1 MB");
             }
 
-            var validFileContentResult = _transactionService.ValidateFileContent(dataFile);
+            var result = _transactionService.ReadFileContents(dataFile);
+
+            var validFileContentResult = _transactionService.ValidateFileContent(result.TransactionDtos, result.FileExtension);
+            
             if (validFileContentResult.Length > 0)
             {
                 return BadRequest(validFileContentResult);
             }
 
             // Save to database
-            var fileContents = _transactionService.ReadFileContents(dataFile);
-
-            var validateMessage = _transactionService.AddTransactions(fileContents);
+            var validateMessage = _transactionService.AddTransactions(result.TransactionDtos);
 
             if (!string.IsNullOrEmpty(validateMessage))
             {

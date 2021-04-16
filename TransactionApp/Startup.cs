@@ -27,6 +27,9 @@ namespace TransactionApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<CsvFileReader>();
+            services.AddScoped<XmlFileReader>();
+            services.AddScoped<IFileReaderResolver, FileReaderResolver>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

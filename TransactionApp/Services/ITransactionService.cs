@@ -12,11 +12,11 @@ namespace TransactionApp.Services
 
         bool ValidateFileSize(IFormFile dataFile);
 
-        string[] ValidateFileContent(IFormFile dataFile);
+        string[] ValidateFileContent(IEnumerable<TransactionDto> transactions, string fileExtension);
 
-        List<TransactionDto> ReadFileContents(IFormFile dataFile);
+        (IEnumerable<TransactionDto> TransactionDtos, string FileExtension) ReadFileContents(IFormFile dataFile);
 
-        string AddTransactions(List<TransactionDto> transactions);
+        string AddTransactions(IEnumerable<TransactionDto> transactions);
 
         List<TransactionResult> GetByCurrency(string currency);
 
